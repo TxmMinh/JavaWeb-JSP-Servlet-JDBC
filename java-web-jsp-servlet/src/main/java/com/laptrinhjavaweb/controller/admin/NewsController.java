@@ -3,7 +3,6 @@ package com.laptrinhjavaweb.controller.admin;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.print.attribute.standard.PageRanges;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,7 +38,7 @@ public class NewsController extends HttpServlet{
 		
 		Pageable pageable = new PageRequest(model.getPage(), model.getMaxPageItem(),
 											new Sorter(model.getSortName(), model.getSortBy()));
-		model.setListResult(newsService.findAll(pageable));
+		model.setListResult(newsService.findAll(pageable));	
 		model.setTotalItem(newsService.getTotalItem());
 		model.setTotalPage((int) Math.ceil((double) model.getTotalItem() / model.getMaxPageItem()));
 		request.setAttribute(SystemConstant.MODEL, model);

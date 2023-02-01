@@ -23,7 +23,6 @@ public class PageRequest implements Pageable {
 	public Integer getOffset() {
 		if (this.page != null && this.maxPageItem != null) {
 			return (this.page - 1) * this.maxPageItem;
-
 		}
 		return null;
 	}
