@@ -1,4 +1,6 @@
 <%@include file="/common/taglib.jsp" %>
+<c:url var="APIurl" value="/api-admin-news"/>
+<c:url var ="NewsURL" value="/admin-news"/>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -47,6 +49,7 @@
 									<table class="table table-bordered">
 										<thead>
 											<tr>
+												<th><input type="checkbox" id="checkAll"></th>
 												<th>Tên bài viết</th>
 												<th>Mô tả ngắn</th>
 												<th>Thao tác</th>
@@ -55,6 +58,7 @@
 										<tbody>											
 											<c:forEach var="item" items="${model.listResult}">
 												<tr>
+													<td><input type="checkbox" id="checkbox_${item.id}" value="${item.id}"></td>
 													<td>${item.title}</td>
 													<td>${item.shortDescription}</td>
 													<td>
@@ -112,6 +116,29 @@
 				}
 			});
 		});
+		$('#btnDelete').click(function (e) {
+			var data = {};
+			var ids = $('tbody input[type=checkbox]:checked').map(function () {
+				return $(this).val();
+			}).get();
+			data['ids'] = ids;
+			deleteNews(data);
+		});
+
+		function deleteNews(data) {
+			$.ajax({
+				url: '${APIurl}',
+				type: 'DELETE',
+				contentType: 'application/json',
+				data: JSON.stringify(data),
+				success: function (result) {
+					window.location.href = "${NewsURL}?type=list&maxPageItem=2&page=1";
+				},
+				error: function (error) {
+					console.log(error);
+				}
+			});
+		}
 	</script>
 </body>
 </html>

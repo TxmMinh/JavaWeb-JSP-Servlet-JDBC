@@ -107,7 +107,7 @@
 <script>
     $('#btnAddOrUpdateNew').click(function (e) {
         e.preventDefault();
-        var data = {};
+        var data = {}; // Javascript  object
         var formData = $('#formSubmit').serializeArray();
         $.each(formData, function (i, v) {
             data["" + v.name + ""] = v.value;
@@ -123,9 +123,9 @@
         $.ajax({
             url: '${APIurl}',
             type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            dataType: 'json',
+            contentType: 'application/json', // datatype client sent to server
+            data: JSON.stringify(data), // convert javascript object to string(json) to sent to server
+            dataType: 'json', // datatype server response client
             success: function (result) {
                 console.log(result);
             },
