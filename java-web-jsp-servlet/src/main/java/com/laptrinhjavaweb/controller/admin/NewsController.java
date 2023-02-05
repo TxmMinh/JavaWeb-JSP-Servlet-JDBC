@@ -14,6 +14,7 @@ import com.laptrinhjavaweb.constant.SystemConstant;
 import com.laptrinhjavaweb.model.NewsModel;
 import com.laptrinhjavaweb.paging.PageRequest;
 import com.laptrinhjavaweb.paging.Pageable;
+import com.laptrinhjavaweb.service.ICategoryService;
 import com.laptrinhjavaweb.service.INewsService;
 import com.laptrinhjavaweb.sort.Sorter;
 import com.laptrinhjavaweb.utils.FormUtil;
@@ -25,6 +26,9 @@ public class NewsController extends HttpServlet{
 
 	@Inject
 	private INewsService newsService;
+
+	@Inject
+	private ICategoryService categoryService;
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		/*
@@ -34,16 +38,29 @@ public class NewsController extends HttpServlet{
 		 * 	   model.setPage(Integer.parseInt(pageStr));
 		 * } else { model.setPage(1); } 
 		 */
+
 		NewsModel model = FormUtil.toModel(NewsModel.class, request); // get parameters from url and map they with field in model		
-		
-		Pageable pageable = new PageRequest(model.getPage(), model.getMaxPageItem(),
-											new Sorter(model.getSortName(), model.getSortBy()));
-		model.setListResult(newsService.findAll(pageable));	
-		model.setTotalItem(newsService.getTotalItem());
-		model.setTotalPage((int) Math.ceil((double) model.getTotalItem() / model.getMaxPageItem()));
+		String view = "";
+		if (model.getType().equals(SystemConstant.LIST)) {
+			Pageable pageable = new PageRequest(model.getPage(), model.getMaxPageItem(),
+					new Sorter(model.getSortName(), model.getSortBy()));
+			model.setListResult(newsService.findAll(pageable));
+			model.setTotalItem(newsService.getTotalItem());
+			model.setTotalPage((int) Math.ceil((double) model.getTotalItem() / model.getMaxPageItem()));
+			view = "/views/admin/news/list.jsp";
+		} else if (model.getType().equals(SystemConstant.EDIT)) {
+			if (model.getId() != null) {
+				model = newsService.findOne(model.getId());
+			} else {
+
+			}
+			request.setAttribute("categories", categoryService.findAll());
+			view = "/views/admin/news/edit.jsp";
+		}
 		request.setAttribute(SystemConstant.MODEL, model);
-		RequestDispatcher rd = request.getRequestDispatcher("/views/admin/news/list.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher(view);
 		rd.forward(request, response);
+
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
